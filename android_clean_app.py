@@ -40,7 +40,13 @@ class Issue:
         if res_all:
             res = res_all[0]
             bits = res.split('.')[-2:]
-            self.elements.append((bits[0], bits[1]))
+            if bits[0] != 'array':
+               type=bits[0]
+            else:
+                # array is a generic type, which may take form string-array, integer-array, etc. 
+                # The only way to get type is to parse from errorLine1 which is less reliable than message.
+               type=re.findall(Issue.pattern_array, errorLine1)[0][0]
+            self.elements.append((type, bits[1]))
         else:
             print("The pattern '%s' seems to find nothing in the error message '%s'. We can't find the resource and can't remove it. The pattern might have changed, please check and report this in github issues." % (
                 Issue.pattern, message))
